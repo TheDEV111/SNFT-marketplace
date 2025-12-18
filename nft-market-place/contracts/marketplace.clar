@@ -1,6 +1,9 @@
 ;; NFT Marketplace Contract
 ;; Enables listing, buying, selling, and offer management with platform fees
 
+;; NFT Trait Definition
+(use-trait nft-trait 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sip-009-nft-trait.sip-009-nft-trait)
+
 ;; Constants
 (define-constant contract-owner tx-sender)
 (define-constant err-owner-only (err u200))
