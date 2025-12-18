@@ -65,15 +65,23 @@ export default function Navbar() {
           {/* Wallet Connection */}
           <div className="flex items-center space-x-4">
             {isConnected && address ? (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={disconnectWallet}
-                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg font-semibold text-white flex items-center space-x-2 hover:shadow-lg hover:shadow-purple-500/50 transition-all"
-              >
-                <Wallet className="w-4 h-4" />
-                <span>{truncateAddress(address)}</span>
-              </motion.button>
+              <div className="flex items-center gap-2">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  className="px-6 py-2 bg-white/10 backdrop-blur-sm border border-purple-500/30 rounded-lg font-semibold text-white flex items-center space-x-2"
+                >
+                  <Wallet className="w-4 h-4" />
+                  <span>{truncateAddress(address)}</span>
+                </motion.div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={disconnectWallet}
+                  className="px-4 py-2 bg-red-600/80 hover:bg-red-600 rounded-lg font-semibold text-white transition-all"
+                >
+                  Disconnect
+                </motion.button>
+              </div>
             ) : (
               <motion.button
                 whileHover={{ scale: 1.05 }}
