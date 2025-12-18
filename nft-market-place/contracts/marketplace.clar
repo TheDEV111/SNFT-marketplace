@@ -154,7 +154,7 @@
             price: price,
             status: listing-status-active,
             expiry: expiry,
-            created-at: block-height
+            created-at: stacks-block-height
         })
         
         (map-set token-listings {nft-contract: nft-contract, token-id: token-id} listing-id)
@@ -218,7 +218,7 @@
         ;; Validations
         (asserts! (var-get marketplace-enabled) err-unauthorized)
         (asserts! (is-eq (get status listing) listing-status-active) err-nft-not-listed)
-        (asserts! (<= block-height (get expiry listing)) err-listing-expired)
+        (asserts! (<= stacks-block-height (get expiry listing)) err-listing-expired)
         (asserts! (is-eq nft-contract (get nft-contract listing)) err-unauthorized)
         
         ;; Transfer payment to seller
@@ -259,7 +259,7 @@
         ;; Validations
         (asserts! (var-get marketplace-enabled) err-unauthorized)
         (asserts! (> amount u0) err-invalid-offer)
-        (asserts! (> expiry block-height) err-offer-expired)
+        (asserts! (> expiry stacks-block-height) err-offer-expired)
         
         ;; Create offer
         (map-set offers offer-id {
@@ -269,7 +269,7 @@
             amount: amount,
             status: offer-status-pending,
             expiry: expiry,
-            created-at: block-height
+            created-at: stacks-block-height
         })
         
         ;; Add to token offers list (if space available)
@@ -313,7 +313,7 @@
         ;; Validations
         (asserts! (var-get marketplace-enabled) err-unauthorized)
         (asserts! (is-eq (get status offer) offer-status-pending) err-invalid-offer)
-        (asserts! (<= block-height (get expiry offer)) err-offer-expired)
+        (asserts! (<= stacks-block-height (get expiry offer)) err-offer-expired)
         (asserts! (is-eq nft-contract (get nft-contract offer)) err-unauthorized)
         
         ;; If there's an active listing, cancel it

@@ -112,7 +112,7 @@
 (define-private (update-creator-earnings (creator principal) (amount uint))
     (let ((current-earnings (default-to u0 (map-get? creator-earnings creator))))
         (map-set creator-earnings creator (+ current-earnings amount))
-        (ok true)
+        true
     )
 )
 
@@ -123,7 +123,7 @@
             (current-earnings (default-to u0 (map-get? platform-earnings recipient)))
         )
         (map-set platform-earnings recipient (+ current-earnings amount))
-        (ok true)
+        true
     )
 )
 
@@ -210,7 +210,7 @@
         (if (> platform-fee u0)
             (begin
                 (try! (transfer-stx-safe platform-fee buyer (var-get platform-fee-recipient)))
-                (try! (update-platform-earnings platform-fee))
+                (asserts! (update-platform-earnings platform-fee) err-transfer-failed)
             )
             true
         )
@@ -219,7 +219,7 @@
         (if (and (> royalty-amount u0) (not (is-eq creator seller)))
             (begin
                 (try! (transfer-stx-safe royalty-amount buyer creator))
-                (try! (update-creator-earnings creator royalty-amount))
+                (asserts! (update-creator-earnings creator royalty-amount) err-transfer-failed)
             )
             true
         )
@@ -269,7 +269,7 @@
         (if (> platform-fee u0)
             (begin
                 (try! (transfer-stx-safe platform-fee tx-sender (var-get platform-fee-recipient)))
-                (try! (update-platform-earnings platform-fee))
+                (asserts! (update-platform-earnings platform-fee) err-transfer-failed)
             )
             true
         )
@@ -278,7 +278,7 @@
         (if (and (> royalty-amount u0) (not (is-eq creator seller)))
             (begin
                 (try! (transfer-stx-safe royalty-amount tx-sender creator))
-                (try! (update-creator-earnings creator royalty-amount))
+                (asserts! (update-creator-earnings creator royalty-amount) err-transfer-failed)
             )
             true
         )
