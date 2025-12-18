@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Wallet, Menu, X } from 'lucide-react';
 import { useWalletStore } from '@/lib/wallet';
 import { useState } from 'react';
+import { LogoIcon } from '@/components/Logo';
 
 export default function Navbar() {
   const { isConnected, address, connectWallet, disconnectWallet, checkConnection } = useWalletStore();
@@ -40,10 +41,8 @@ export default function Navbar() {
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-2"
             >
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">S</span>
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <LogoIcon size={40} />
+              <span className="text-2xl font-bold text-white">
                 SNFT
               </span>
             </motion.div>

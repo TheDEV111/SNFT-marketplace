@@ -1,79 +1,64 @@
 'use client';
 
 import { create } from 'zustand';
-import { AppConfig, UserSession, showConnect } from '@stacks/connect';
-
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-const userSession = new UserSession({ appConfig });
+import { connect, disconnect, isConnected, getLocalStorage } from '@stacks/connect';
 
 interface WalletState {
-  userSession: UserSession;
-  userData: any | null;
   isConnected: boolean;
   address: string | null;
-  connectWallet: () => void;
+  connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
   checkConnection: () => void;
 }
 
 export const useWalletStore = create<WalletState>((set) => ({
-  userSession,
-  userData: null,
   isConnected: false,
   address: null,
 
-  connectWallet: () => {
+  connectWallet: async () => {
     if (typeof window === 'undefined') return;
     
-    showConnect({
-      appDetails: {
-        name: 'SNFT Marketplace',
-        icon: window.location.origin + '/logo.png',
-      },
-      onFinish: () => {
-        setTimeout(() => {
-          if (userSession.isUserSignedIn()) {
-            const userData = userSession.loadUserData();
-            set({
-              userData,
-              isConnected: true,
-              address: userData.profile.stxAddress.mainnet,
-            });
-          }
-        }, 100);
-      },
-      onCancel: () => {
-        console.log('User cancelled authentication');
-      },
-      userSession,
-    });
+    try {
+      // Use the modern connect() API - opens wallet selection modal
+      const response = await connect();
+      
+      // Get the stored address from local storage
+      const data = getLocalStorage();
+      const stxAddress = data?.addresses?.stx?.[0]?.address || null;
+      
+      set({
+        isConnected: true,
+        address: stxAddress,
+      });
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+      set({
+        isConnected: false,
+        address: null,
+      });
+    }
   },
 
   disconnectWallet: () => {
-    userSession.signUserOut();
+    disconnect();
     set({
-      userData: null,
       isConnected: false,
       address: null,
     });
-    window.location.reload();
   },
 
   checkConnection: () => {
-    if (userSession.isUserSignedIn()) {
-      const userData = userSession.loadUserData();
+    if (isConnected()) {
+      const data = getLocalStorage();
+      const stxAddress = data?.addresses?.stx?.[0]?.address || null;
       set({
-        userData,
         isConnected: true,
-        address: userData.profile.stxAddress.mainnet,
+        address: stxAddress,
       });
-    } else if (userSession.isSignInPending()) {
-      userSession.handlePendingSignIn().then((userData) => {
-        set({
-          userData,
-          isConnected: true,
-          address: userData.profile.stxAddress.mainnet,
-        });
+    } else {
+      set({
+        isConnected: false,
+        address: null,
       });
     }
   },
