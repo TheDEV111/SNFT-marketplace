@@ -176,25 +176,25 @@ export default function ProfilePage() {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
               <div className="bg-white/5 backdrop-blur-sm border border-purple-500/20 rounded-xl p-4 text-center">
-                <p className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                <p className="text-3xl font-bold text-white">
                   {profile.stats.owned}
                 </p>
                 <p className="text-gray-400 text-sm mt-1">Owned</p>
               </div>
               <div className="bg-white/5 backdrop-blur-sm border border-purple-500/20 rounded-xl p-4 text-center">
-                <p className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                <p className="text-3xl font-bold text-white">
                   {profile.stats.listed}
                 </p>
                 <p className="text-gray-400 text-sm mt-1">Listed</p>
               </div>
               <div className="bg-white/5 backdrop-blur-sm border border-purple-500/20 rounded-xl p-4 text-center">
-                <p className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                <p className="text-3xl font-bold text-white">
                   {profile.stats.created}
                 </p>
                 <p className="text-gray-400 text-sm mt-1">Created</p>
               </div>
               <div className="bg-white/5 backdrop-blur-sm border border-purple-500/20 rounded-xl p-4 text-center">
-                <p className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                <p className="text-3xl font-bold text-white">
                   {profile.stats.volume}
                 </p>
                 <p className="text-gray-400 text-sm mt-1">STX Volume</p>
@@ -265,7 +265,7 @@ export default function ProfilePage() {
                     <div className="flex-1">
                       <h3 className="text-xl font-bold text-white mb-1">{offer.nft}</h3>
                       <p className="text-gray-400 text-sm mb-2">Offer from {offer.from}</p>
-                      <p className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                      <p className="text-2xl font-bold text-white">
                         {offer.amount} STX
                       </p>
                       <p className="text-sm text-gray-400 mt-1">Expires {offer.expiry}</p>

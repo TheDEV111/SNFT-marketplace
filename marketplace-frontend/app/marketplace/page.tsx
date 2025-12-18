@@ -35,7 +35,7 @@ export default function MarketplacePage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-6xl font-bold mb-4 text-white">
             Explore Marketplace
           </h1>
           <p className="text-xl text-gray-400">

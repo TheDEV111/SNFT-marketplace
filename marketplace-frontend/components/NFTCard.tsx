@@ -101,7 +101,7 @@ export default function NFTCard({ nft }: NFTCardProps) {
           <div className="flex items-center justify-between pt-3 border-t border-purple-500/20">
             <div>
               <p className="text-xs text-gray-400 mb-1">Price</p>
-              <p className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <p className="text-xl font-bold text-white">
                 {nft.price} STX
               </p>
             </div>

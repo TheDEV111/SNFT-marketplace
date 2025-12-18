@@ -163,7 +163,7 @@ export default function NFTDetailPage({ params }: { params: { id: string } }) {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="text-sm text-gray-400 mb-1">Current Price</p>
-                  <p className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  <p className="text-4xl font-bold text-white">
                     {nft.price} STX
                   </p>
                 </div>
