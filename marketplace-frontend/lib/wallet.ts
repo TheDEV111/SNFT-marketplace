@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { AppConfig, UserSession } from '@stacks/connect';
+import { AppConfig, UserSession, showConnect } from '@stacks/connect';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -22,39 +22,31 @@ export const useWalletStore = create<WalletState>((set) => ({
   isConnected: false,
   address: null,
 
-  connectWallet: async () => {
+  connectWallet: () => {
     if (typeof window === 'undefined') return;
     
-    try {
-      // Dynamically import the connect function to avoid SSR issues
-      const { showConnect } = await import('@stacks/connect');
-      
-      showConnect({
-        appDetails: {
-          name: 'SNFT Marketplace',
-          icon: window.location.origin + '/logo.png',
-        },
-        onFinish: () => {
-          setTimeout(() => {
-            if (userSession.isUserSignedIn()) {
-              const userData = userSession.loadUserData();
-              set({
-                userData,
-                isConnected: true,
-                address: userData.profile.stxAddress.mainnet,
-              });
-            }
-          }, 100);
-        },
-        onCancel: () => {
-          console.log('User cancelled authentication');
-        },
-        userSession,
-      });
-    } catch (error) {
-      console.error('Error connecting wallet:', error);
-      alert('Failed to open wallet connection. Please make sure Hiro Wallet extension is installed.');
-    }
+    showConnect({
+      appDetails: {
+        name: 'SNFT Marketplace',
+        icon: window.location.origin + '/logo.png',
+      },
+      onFinish: () => {
+        setTimeout(() => {
+          if (userSession.isUserSignedIn()) {
+            const userData = userSession.loadUserData();
+            set({
+              userData,
+              isConnected: true,
+              address: userData.profile.stxAddress.mainnet,
+            });
+          }
+        }, 100);
+      },
+      onCancel: () => {
+        console.log('User cancelled authentication');
+      },
+      userSession,
+    });
   },
 
   disconnectWallet: () => {
