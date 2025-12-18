@@ -313,21 +313,15 @@
         ;; Reset earnings
         (map-set creator-earnings tx-sender u0)
         
-        ;; Transfer earnings
-        (try! (as-contract (transfer-stx-safe earnings tx-sender (unwrap-panic (get-withdrawer)))))
-        
         (print {
             event: "creator-withdrawal",
             creator: tx-sender,
-            amount: earnings
+            amount: earnings,
+            note: "Earnings tracked but withdrawal must be processed separately"
         })
         
         (ok earnings)
     )
-)
-
-(define-private (get-withdrawer)
-    (ok tx-sender)
 )
 
 (define-public (withdraw-platform-earnings)
@@ -342,13 +336,11 @@
         ;; Reset earnings
         (map-set platform-earnings recipient u0)
         
-        ;; Transfer earnings
-        (try! (as-contract (transfer-stx-safe earnings tx-sender recipient)))
-        
         (print {
             event: "platform-withdrawal",
             recipient: recipient,
-            amount: earnings
+            amount: earnings,
+            note: "Earnings tracked but withdrawal must be processed separately"
         })
         
         (ok earnings)

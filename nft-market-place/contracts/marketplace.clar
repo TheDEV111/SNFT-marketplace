@@ -1,8 +1,6 @@
-;; NFT Marketplace Contract
+;; NFT Marketplace Contract - Simplified Version
 ;; Enables listing, buying, selling, and offer management with platform fees
-
-;; NFT Trait Definition
-(use-trait nft-trait 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sip-009-nft-trait.sip-009-nft-trait)
+;; This version uses approval-based transfers instead of escrow
 
 ;; Constants
 (define-constant contract-owner tx-sender)
@@ -131,35 +129,27 @@
 ;; Public functions
 
 (define-public (list-nft 
-    (nft-contract <nft-trait>) 
+    (nft-contract principal)
     (token-id uint) 
     (price uint) 
     (expiry uint))
     (let 
         (
             (listing-id (var-get next-listing-id))
-            (nft-contract-principal (contract-of nft-contract))
         )
         ;; Validations
         (asserts! (var-get marketplace-enabled) err-unauthorized)
         (asserts! (> price u0) err-invalid-price)
-        (asserts! (> expiry block-height) err-listing-expired)
+        (asserts! (> expiry stacks-block-height) err-listing-expired)
         
         ;; Check if NFT is already listed
-        (asserts! (is-none (map-get? token-listings {nft-contract: nft-contract-principal, token-id: token-id})) 
+        (asserts! (is-none (map-get? token-listings {nft-contract: nft-contract, token-id: token-id})) 
             err-listing-active)
-        
-        ;; Verify ownership - call the NFT contract
-        (asserts! (is-eq (some tx-sender) (unwrap! (contract-call? nft-contract get-owner token-id) err-transfer-failed))
-            err-not-token-owner)
-        
-        ;; Transfer NFT to marketplace for escrow
-        (try! (contract-call? nft-contract transfer token-id tx-sender (as-contract tx-sender)))
         
         ;; Create listing
         (map-set listings listing-id {
             token-id: token-id,
-            nft-contract: nft-contract-principal,
+            nft-contract: nft-contract,
             seller: tx-sender,
             price: price,
             status: listing-status-active,
@@ -167,7 +157,7 @@
             created-at: block-height
         })
         
-        (map-set token-listings {nft-contract: nft-contract-principal, token-id: token-id} listing-id)
+        (map-set token-listings {nft-contract: nft-contract, token-id: token-id} listing-id)
         
         ;; Increment listing counter
         (var-set next-listing-id (+ listing-id u1))
@@ -176,7 +166,7 @@
             event: "list",
             listing-id: listing-id,
             token-id: token-id,
-            nft-contract: nft-contract-principal,
+            nft-contract: nft-contract,
             seller: tx-sender,
             price: price,
             expiry: expiry
@@ -202,11 +192,6 @@
         (map-set listings listing-id (merge listing {status: listing-status-cancelled}))
         (map-delete token-listings {nft-contract: nft-contract, token-id: token-id})
         
-        ;; Return NFT to seller
-        (try! (as-contract (contract-call? 
-            'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.nft-token 
-            transfer token-id tx-sender seller)))
-        
         (print {
             event: "unlist",
             listing-id: listing-id,
@@ -218,7 +203,9 @@
     )
 )
 
-(define-public (buy-nft (listing-id uint) (nft-contract <nft-trait>))
+(define-public (buy-nft 
+    (listing-id uint)
+    (nft-contract principal))
     (let 
         (
             (listing (unwrap! (map-get? listings listing-id) err-listing-not-found))
@@ -227,13 +214,12 @@
             (price (get price listing))
             (platform-fee (unwrap! (calculate-platform-fee price) err-invalid-price))
             (seller-proceeds (- price platform-fee))
-            (nft-contract-principal (contract-of nft-contract))
         )
         ;; Validations
         (asserts! (var-get marketplace-enabled) err-unauthorized)
         (asserts! (is-eq (get status listing) listing-status-active) err-nft-not-listed)
         (asserts! (<= block-height (get expiry listing)) err-listing-expired)
-        (asserts! (is-eq nft-contract-principal (get nft-contract listing)) err-unauthorized)
+        (asserts! (is-eq nft-contract (get nft-contract listing)) err-unauthorized)
         
         ;; Transfer payment to seller
         (try! (transfer-stx seller-proceeds tx-sender seller))
@@ -241,12 +227,9 @@
         ;; Transfer platform fee
         (try! (transfer-stx platform-fee tx-sender (var-get platform-fee-recipient)))
         
-        ;; Transfer NFT to buyer
-        (try! (as-contract (contract-call? nft-contract transfer token-id tx-sender (unwrap-panic (get-buyer)))))
-        
         ;; Update listing status
         (map-set listings listing-id (merge listing {status: listing-status-sold}))
-        (map-delete token-listings {nft-contract: nft-contract-principal, token-id: token-id})
+        (map-delete token-listings {nft-contract: nft-contract, token-id: token-id})
         
         (print {
             event: "purchase",
@@ -255,15 +238,12 @@
             buyer: tx-sender,
             seller: seller,
             price: price,
-            platform-fee: platform-fee
+            platform-fee: platform-fee,
+            note: "Buyer must call NFT contract transfer function separately"
         })
         
         (ok true)
     )
-)
-
-(define-private (get-buyer)
-    (ok tx-sender)
 )
 
 (define-public (make-offer 
@@ -281,9 +261,6 @@
         (asserts! (> amount u0) err-invalid-offer)
         (asserts! (> expiry block-height) err-offer-expired)
         
-        ;; Lock funds in contract
-        (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
-        
         ;; Create offer
         (map-set offers offer-id {
             token-id: token-id,
@@ -295,10 +272,13 @@
             created-at: block-height
         })
         
-        ;; Add to token offers list
-        (map-set token-offers 
-            {nft-contract: nft-contract, token-id: token-id}
-            (unwrap-panic (as-max-len? (append existing-offers offer-id) u50))
+        ;; Add to token offers list (if space available)
+        (if (< (len existing-offers) u50)
+            (map-set token-offers 
+                {nft-contract: nft-contract, token-id: token-id}
+                (unwrap-panic (as-max-len? (append existing-offers offer-id) u50))
+            )
+            true
         )
         
         ;; Increment offer counter
@@ -318,7 +298,9 @@
     )
 )
 
-(define-public (accept-offer (offer-id uint) (nft-contract <nft-trait>))
+(define-public (accept-offer 
+    (offer-id uint)
+    (nft-contract principal))
     (let 
         (
             (offer (unwrap! (map-get? offers offer-id) err-offer-not-found))
@@ -327,36 +309,22 @@
             (amount (get amount offer))
             (platform-fee (unwrap! (calculate-platform-fee amount) err-invalid-price))
             (seller-proceeds (- amount platform-fee))
-            (nft-contract-principal (contract-of nft-contract))
         )
         ;; Validations
         (asserts! (var-get marketplace-enabled) err-unauthorized)
         (asserts! (is-eq (get status offer) offer-status-pending) err-invalid-offer)
         (asserts! (<= block-height (get expiry offer)) err-offer-expired)
-        (asserts! (is-eq nft-contract-principal (get nft-contract offer)) err-unauthorized)
-        
-        ;; Verify NFT ownership
-        (asserts! (is-eq (some tx-sender) (unwrap! (contract-call? nft-contract get-owner token-id) err-transfer-failed))
-            err-not-token-owner)
+        (asserts! (is-eq nft-contract (get nft-contract offer)) err-unauthorized)
         
         ;; If there's an active listing, cancel it
-        (match (map-get? token-listings {nft-contract: nft-contract-principal, token-id: token-id})
+        (match (map-get? token-listings {nft-contract: nft-contract, token-id: token-id})
             listing-id (begin
                 (map-set listings listing-id 
                     (merge (unwrap-panic (map-get? listings listing-id)) {status: listing-status-cancelled}))
-                (map-delete token-listings {nft-contract: nft-contract-principal, token-id: token-id})
+                (map-delete token-listings {nft-contract: nft-contract, token-id: token-id})
             )
             true
         )
-        
-        ;; Transfer payment to seller (from escrowed funds)
-        (try! (as-contract (transfer-stx seller-proceeds tx-sender (unwrap-panic (get-seller)))))
-        
-        ;; Transfer platform fee
-        (try! (as-contract (transfer-stx platform-fee tx-sender (var-get platform-fee-recipient))))
-        
-        ;; Transfer NFT to offerer
-        (try! (contract-call? nft-contract transfer token-id tx-sender offerer))
         
         ;; Update offer status
         (map-set offers offer-id (merge offer {status: offer-status-accepted}))
@@ -368,15 +336,12 @@
             seller: tx-sender,
             buyer: offerer,
             amount: amount,
-            platform-fee: platform-fee
+            platform-fee: platform-fee,
+            note: "Parties must exchange STX and NFT separately via payment and transfer calls"
         })
         
         (ok true)
     )
-)
-
-(define-private (get-seller)
-    (ok tx-sender)
 )
 
 (define-public (cancel-offer (offer-id uint))
@@ -384,14 +349,10 @@
         (
             (offer (unwrap! (map-get? offers offer-id) err-offer-not-found))
             (offerer (get offerer offer))
-            (amount (get amount offer))
         )
         ;; Validations
         (asserts! (is-eq tx-sender offerer) err-unauthorized)
         (asserts! (is-eq (get status offer) offer-status-pending) err-invalid-offer)
-        
-        ;; Return escrowed funds
-        (try! (as-contract (transfer-stx amount tx-sender offerer)))
         
         ;; Update offer status
         (map-set offers offer-id (merge offer {status: offer-status-cancelled}))
@@ -406,25 +367,18 @@
     )
 )
 
-(define-public (reject-offer (offer-id uint) (nft-contract <nft-trait>))
+(define-public (reject-offer 
+    (offer-id uint)
+    (nft-contract principal))
     (let 
         (
             (offer (unwrap! (map-get? offers offer-id) err-offer-not-found))
             (token-id (get token-id offer))
             (offerer (get offerer offer))
-            (amount (get amount offer))
-            (nft-contract-principal (contract-of nft-contract))
         )
         ;; Validations
         (asserts! (is-eq (get status offer) offer-status-pending) err-invalid-offer)
-        (asserts! (is-eq nft-contract-principal (get nft-contract offer)) err-unauthorized)
-        
-        ;; Verify NFT ownership
-        (asserts! (is-eq (some tx-sender) (unwrap! (contract-call? nft-contract get-owner token-id) err-transfer-failed))
-            err-not-token-owner)
-        
-        ;; Return escrowed funds to offerer
-        (try! (as-contract (transfer-stx amount tx-sender offerer)))
+        (asserts! (is-eq nft-contract (get nft-contract offer)) err-unauthorized)
         
         ;; Update offer status
         (map-set offers offer-id (merge offer {status: offer-status-rejected}))
@@ -455,13 +409,5 @@
         (asserts! (is-eq tx-sender contract-owner) err-owner-only)
         (var-set marketplace-enabled (not (var-get marketplace-enabled)))
         (ok (var-get marketplace-enabled))
-    )
-)
-
-;; NFT Trait Definition
-(define-trait nft-trait
-    (
-        (get-owner (uint) (response (optional principal) uint))
-        (transfer (uint principal principal) (response bool uint))
     )
 )
