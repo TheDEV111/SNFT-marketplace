@@ -42,7 +42,7 @@ export default function Navbar() {
               className="flex items-center space-x-2"
             >
               <LogoIcon size={40} />
-              <span className="text-2xl font-bold text-white">
+              <span className="text-2xl font-bold text-white font-playfair">
                 SNFT
               </span>
             </motion.div>

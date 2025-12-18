@@ -54,7 +54,7 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-6xl md:text-8xl font-bold mb-6 text-white leading-tight"
+            className="text-6xl md:text-8xl font-bold mb-6 text-white leading-tight font-playfair"
           >
             The Future of
             <br />
@@ -124,7 +124,7 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
               className="text-center"
             >
-              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2 font-playfair">
                 {stat.value}
               </div>
               <div className="text-gray-400 font-medium">{stat.label}</div>
@@ -142,7 +142,7 @@ export default function Home() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-playfair">
             Why Choose SNFT?
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">

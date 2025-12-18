@@ -16,7 +16,7 @@ export default function Logo({ size = 40, className = '' }: LogoProps) {
       className={className}
     >
       {/* Background Circle */}
-      <circle cx="50" cy="50" r="48" fill="url(#gradient)" />
+      <circle cx="50" cy="50" r="48" fill="#9333ea" />
       
       {/* Hexagon Shape */}
       <path
@@ -48,15 +48,6 @@ export default function Logo({ size = 40, className = '' }: LogoProps) {
       <circle cx="56" cy="44" r="2" fill="white" />
       <circle cx="56" cy="50" r="2" fill="white" />
       <circle cx="56" cy="56" r="2" fill="white" />
-      
-      {/* Gradient Definition */}
-      <defs>
-        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#9333ea" />
-          <stop offset="50%" stopColor="#ec4899" />
-          <stop offset="100%" stopColor="#f97316" />
-        </linearGradient>
-      </defs>
     </svg>
   );
 }
@@ -73,7 +64,7 @@ export function LogoIcon({ size = 40, className = '' }: LogoProps) {
       className={className}
     >
       {/* Rounded Square Background */}
-      <rect x="10" y="10" width="80" height="80" rx="20" fill="url(#iconGradient)" />
+      <rect x="10" y="10" width="80" height="80" rx="20" fill="#9333ea" />
       
       {/* Geometric NFT Symbol */}
       <path
@@ -103,13 +94,6 @@ export function LogoIcon({ size = 40, className = '' }: LogoProps) {
       >
         S
       </text>
-      
-      <defs>
-        <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#9333ea" />
-          <stop offset="100%" stopColor="#ec4899" />
-        </linearGradient>
-      </defs>
     </svg>
   );
 }

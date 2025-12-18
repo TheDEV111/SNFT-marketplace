@@ -69,7 +69,7 @@ export default function DemoPage() {
       // For demo, use a mock IPFS URI
       const tokenUri = `ipfs://QmDemo${Date.now()}`;
       
-      await mintNFT(tokenUri, address, mintRoyalty.toString());
+      await mintNFT(address, tokenUri, mintRoyalty);
       
       setMintStatus('success');
       setTimeout(() => {
