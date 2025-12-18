@@ -13,15 +13,15 @@ export default function MarketplacePage() {
   const [selectedCollection, setSelectedCollection] = useState('all');
 
   // Mock NFT data - replace with real data from contract
-  const mockNFTs = Array.from({ length: 12 }, (_, i) => ({
+  const mockNFTs = useMemo(() => Array.from({ length: 12 }, (_, i) => ({
     id: i + 1,
     name: `Cool NFT #${i + 1}`,
     image: `https://picsum.photos/seed/${i}/400/400`,
-    price: Math.floor(Math.random() * 10 + 1),
+    price: (i % 10) + 1,
     seller: 'SP2X...',
-    likes: Math.floor(Math.random() * 100),
+    likes: (i * 7) % 100,
     collection: i % 3 === 0 ? 'Abstract Art' : i % 3 === 1 ? 'Digital Dreams' : 'Pixel Perfect',
-  }));
+  })), []);
 
   return (
     <div className="min-h-screen relative">

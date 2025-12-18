@@ -91,13 +91,13 @@ export default function CreatePage() {
     try {
       // In production, upload to IPFS first
       const tokenUri = 'ipfs://...'; // Replace with actual IPFS upload
-      await mintNFT(tokenUri);
+      await mintNFT(tokenUri, address, formData.royalty.toString());
       
       // If price is set, list the NFT
       if (formData.price) {
         // Get the newly minted token ID from contract
-        const tokenId = 1; // Replace with actual token ID
-        await listNFT(tokenId, parseFloat(formData.price));
+        const tokenId = '1'; // Replace with actual token ID
+        await listNFT(tokenId, formData.price, address, tokenUri);
       }
 
       alert('NFT minted successfully!');
@@ -111,7 +111,7 @@ export default function CreatePage() {
         properties: [{ trait: '', value: '' }],
       });
       setPreview(null);
-    } catch (error) {
+    } catch {
       alert('Minting failed');
     }
   };
@@ -145,7 +145,7 @@ export default function CreatePage() {
           >
             {/* Upload Area */}
             <div className="bg-white/5 backdrop-blur-sm border border-purple-500/20 rounded-2xl p-6 mb-6">
-              <label className="block text-white font-semibold mb-4 flex items-center gap-2">
+              <label className="text-white font-semibold mb-4 flex items-center gap-2">
                 <ImageIcon className="w-5 h-5 text-purple-400" />
                 Upload Artwork *
               </label>
@@ -295,7 +295,7 @@ export default function CreatePage() {
                 </div>
 
                 <div>
-                  <label className="block text-white font-semibold mb-2 flex items-center gap-2">
+                  <label className="text-white font-semibold mb-2 flex items-center gap-2">
                     <Percent className="w-5 h-5 text-purple-400" />
                     Royalty: {formData.royalty}%
                   </label>

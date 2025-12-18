@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Heart, Share2, MoreVertical, Clock, Tag, TrendingUp, Users } from 'lucide-react';
+import { Heart, Share2, MoreVertical, Clock, Tag } from 'lucide-react';
 import { useState } from 'react';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
@@ -46,9 +46,9 @@ export default function NFTDetailPage({ params }: { params: { id: string } }) {
   const handleBuy = async () => {
     if (!address) return;
     try {
-      await buyNFT(parseInt(params.id), nft.price);
+      await buyNFT(params.id, nft.price.toString(), address);
       alert('Purchase successful!');
-    } catch (error) {
+    } catch {
       alert('Purchase failed');
     }
   };
@@ -56,10 +56,10 @@ export default function NFTDetailPage({ params }: { params: { id: string } }) {
   const handleMakeOffer = async () => {
     if (!address || !offerAmount) return;
     try {
-      await makeOffer(parseInt(params.id), parseFloat(offerAmount));
+      await makeOffer(params.id, offerAmount, address, '2024-12-31');
       alert('Offer submitted!');
       setOfferAmount('');
-    } catch (error) {
+    } catch {
       alert('Offer failed');
     }
   };
