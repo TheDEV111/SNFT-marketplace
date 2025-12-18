@@ -1,13 +1,21 @@
 [project]
 name = "nft-market-place"
-description = ""
+description = "Full-featured NFT marketplace with royalty distribution"
 authors = []
 telemetry = true
 cache_dir = "./.cache"
 
-# [contracts.counter]
-# path = "contracts/counter.clar"
-# epoch = "latest"
+[contracts.nft-token]
+path = "contracts/nft-token.clar"
+epoch = "latest"
+
+[contracts.marketplace]
+path = "contracts/marketplace.clar"
+epoch = "latest"
+
+[contracts.royalty-distributor]
+path = "contracts/royalty-distributor.clar"
+epoch = "latest"
 
 [repl.analysis]
 passes = ["check_checker"]
