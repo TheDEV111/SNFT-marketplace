@@ -5,10 +5,21 @@ import {
   principalCV,
   PostConditionMode 
 } from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
+import { StacksNetwork } from '@stacks/network';
 import { CONTRACT_ADDRESSES } from './contracts';
 
-const network = new StacksMainnet();
+const network: StacksNetwork = {
+  version: 1,
+  chainId: 1,
+  coreApiUrl: 'https://api.mainnet.hiro.so',
+  bnsLookupUrl: 'https://api.mainnet.hiro.so',
+  broadcastEndpoint: '/v2/transactions',
+  transferFeeEstimateEndpoint: '/v2/fees/transfer',
+  accountEndpoint: '/v2/accounts',
+  contractAbiEndpoint: '/v2/contracts/interface',
+  readOnlyFunctionCallEndpoint: '/v2/contracts/call-read',
+  isMainnet: () => true,
+};
 
 // Mint NFT
 export const mintNFT = async (

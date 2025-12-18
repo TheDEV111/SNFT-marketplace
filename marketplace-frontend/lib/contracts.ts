@@ -22,6 +22,15 @@ export const CONTRACT_ADDRESSES = {
   ROYALTY_DISTRIBUTOR: `${CONTRACTS.royaltyDistributor.address}.${CONTRACTS.royaltyDistributor.name}`
 } as const;
 
+// Export individual constants for convenience
+export const NFT_TOKEN = CONTRACT_ADDRESSES.NFT_TOKEN;
+export const MARKETPLACE = CONTRACT_ADDRESSES.MARKETPLACE;
+export const ROYALTY_DISTRIBUTOR = CONTRACT_ADDRESSES.ROYALTY_DISTRIBUTOR;
+
+// Network configuration
+export const STACKS_MAINNET = 'mainnet';
+export const STACKS_TESTNET = 'testnet';
+
 // Fee constants (in basis points)
 export const FEES = {
   PLATFORM_FEE: 250, // 2.5%
