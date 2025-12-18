@@ -77,11 +77,21 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <Link href="/marketplace">
+            <Link href="/demo">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl font-bold text-lg text-white shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/70 transition-all"
+              >
+                Try Live Demo
+              </motion.button>
+            </Link>
+
+            <Link href="/marketplace">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-purple-500/50 rounded-xl font-bold text-lg text-white hover:bg-white/20 transition-all"
               >
                 Explore Marketplace
               </motion.button>

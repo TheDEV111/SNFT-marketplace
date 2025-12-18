@@ -20,6 +20,7 @@ export default function Navbar() {
   };
 
   const navItems = [
+    { name: 'Demo', href: '/demo' },
     { name: 'Marketplace', href: '/marketplace' },
     { name: 'Create', href: '/create' },
     { name: 'Profile', href: '/profile' },
