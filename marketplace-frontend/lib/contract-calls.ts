@@ -9,7 +9,6 @@ import { StacksNetwork } from '@stacks/network';
 import { CONTRACT_ADDRESSES } from './contracts';
 
 const network: StacksNetwork = {
-  version: 1,
   chainId: 1,
   coreApiUrl: 'https://api.mainnet.hiro.so',
   bnsLookupUrl: 'https://api.mainnet.hiro.so',

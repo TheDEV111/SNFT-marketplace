@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Search, SlidersHorizontal, Heart } from 'lucide-react';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';

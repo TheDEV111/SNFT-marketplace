@@ -7,6 +7,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
 import { useWalletStore } from '@/lib/wallet';
 import { mintNFT, listNFT } from '@/lib/contract-calls';
+import { CONTRACT_ADDRESSES } from '@/lib/contracts';
 
 export default function CreatePage() {
   const { address } = useWalletStore();
@@ -91,13 +92,15 @@ export default function CreatePage() {
     try {
       // In production, upload to IPFS first
       const tokenUri = 'ipfs://...'; // Replace with actual IPFS upload
-      await mintNFT(tokenUri, address, formData.royalty.toString());
+      await mintNFT(address, tokenUri, formData.royalty);
       
       // If price is set, list the NFT
       if (formData.price) {
         // Get the newly minted token ID from contract
-        const tokenId = '1'; // Replace with actual token ID
-        await listNFT(tokenId, formData.price, address, tokenUri);
+        const tokenId = 1; // Replace with actual token ID from mint response
+        const priceInMicroSTX = Number(formData.price) * 1000000;
+        const expiryBlocks = 4320; // ~30 days
+        await listNFT(CONTRACT_ADDRESSES.NFT_TOKEN, tokenId, priceInMicroSTX, expiryBlocks);
       }
 
       alert('NFT minted successfully!');

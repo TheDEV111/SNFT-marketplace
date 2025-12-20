@@ -7,6 +7,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
 import { useWalletStore } from '@/lib/wallet';
 import { buyNFT, makeOffer } from '@/lib/contract-calls';
+import { CONTRACT_ADDRESSES } from '@/lib/contracts';
 
 export default function NFTDetailPage({ params }: { params: { id: string } }) {
   const { address } = useWalletStore();
@@ -46,7 +47,8 @@ export default function NFTDetailPage({ params }: { params: { id: string } }) {
   const handleBuy = async () => {
     if (!address) return;
     try {
-      await buyNFT(params.id, nft.price.toString(), address);
+      const listingId = Number(params.id);
+      await buyNFT(listingId, CONTRACT_ADDRESSES.NFT_TOKEN);
       alert('Purchase successful!');
     } catch {
       alert('Purchase failed');
@@ -56,7 +58,10 @@ export default function NFTDetailPage({ params }: { params: { id: string } }) {
   const handleMakeOffer = async () => {
     if (!address || !offerAmount) return;
     try {
-      await makeOffer(params.id, offerAmount, address, '2024-12-31');
+      const tokenId = Number(params.id);
+      const offerInMicroSTX = Number(offerAmount) * 1000000;
+      const expiryBlocks = 4320; // ~30 days
+      await makeOffer(CONTRACT_ADDRESSES.NFT_TOKEN, tokenId, offerInMicroSTX, expiryBlocks);
       alert('Offer submitted!');
       setOfferAmount('');
     } catch {

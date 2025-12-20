@@ -8,6 +8,7 @@ import Navbar from '@/components/Navbar';
 import { useWalletStore } from '@/lib/wallet';
 import { mintNFT, listNFT, buyNFT } from '@/lib/contract-calls';
 import { getNFTData, getUserNFTs, NFTMetadata } from '@/lib/nft-service';
+import { CONTRACT_ADDRESSES } from '@/lib/contracts';
 
 export default function DemoPage() {
   const { address, isConnected } = useWalletStore();
@@ -96,8 +97,10 @@ export default function DemoPage() {
     setListStatus('idle');
 
     try {
-      const tokenUri = `ipfs://QmDemo${selectedNFT}`;
-      await listNFT(selectedNFT, listPrice, address, tokenUri);
+      const tokenId = Number(selectedNFT);
+      const priceInMicroSTX = Number(listPrice) * 1000000;
+      const expiryBlocks = 4320; // ~30 days
+      await listNFT(CONTRACT_ADDRESSES.NFT_TOKEN, tokenId, priceInMicroSTX, expiryBlocks);
       
       setListStatus('success');
       setTimeout(() => {
@@ -137,9 +140,9 @@ export default function DemoPage() {
     setBuyStatus('idle');
 
     try {
+      const tokenIdNumber = Number(buyTokenId);
       // Get listing price from contract
-      const price = '5.0'; // Should fetch from contract
-      await buyNFT(buyTokenId, price, buyNFTData.owner);
+      await buyNFT(tokenIdNumber, CONTRACT_ADDRESSES.NFT_TOKEN);
       
       setBuyStatus('success');
       setTimeout(() => {
