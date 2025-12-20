@@ -32,17 +32,22 @@ export const mintNFT = async (
     uintCV(royaltyPercent)
   ];
 
-  await openContractCall({
-    network,
-    contractAddress: CONTRACT_ADDRESSES.NFT_TOKEN.split('.')[0],
-    contractName: CONTRACT_ADDRESSES.NFT_TOKEN.split('.')[1],
-    functionName: 'mint',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    onFinish: (data) => {
-      console.log('Mint transaction:', data.txId);
-      return data.txId;
-    },
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network,
+      contractAddress: CONTRACT_ADDRESSES.NFT_TOKEN.split('.')[0],
+      contractName: CONTRACT_ADDRESSES.NFT_TOKEN.split('.')[1],
+      functionName: 'mint',
+      functionArgs,
+      postConditionMode: PostConditionMode.Deny,
+      onFinish: (data) => {
+        console.log('Mint transaction:', data.txId);
+        resolve(data.txId);
+      },
+      onCancel: () => {
+        reject(new Error('User cancelled the transaction'));
+      },
+    });
   });
 };
 
@@ -60,17 +65,22 @@ export const listNFT = async (
     uintCV(expiry)
   ];
 
-  await openContractCall({
-    network,
-    contractAddress: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[0],
-    contractName: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[1],
-    functionName: 'list-nft',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    onFinish: (data) => {
-      console.log('List transaction:', data.txId);
-      return data.txId;
-    },
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network,
+      contractAddress: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[0],
+      contractName: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[1],
+      functionName: 'list-nft',
+      functionArgs,
+      postConditionMode: PostConditionMode.Deny,
+      onFinish: (data) => {
+        console.log('List transaction:', data.txId);
+        resolve(data.txId);
+      },
+      onCancel: () => {
+        reject(new Error('User cancelled the transaction'));
+      },
+    });
   });
 };
 
@@ -84,17 +94,22 @@ export const buyNFT = async (
     principalCV(nftContract)
   ];
 
-  await openContractCall({
-    network,
-    contractAddress: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[0],
-    contractName: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[1],
-    functionName: 'buy-nft',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    onFinish: (data) => {
-      console.log('Buy transaction:', data.txId);
-      return data.txId;
-    },
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network,
+      contractAddress: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[0],
+      contractName: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[1],
+      functionName: 'buy-nft',
+      functionArgs,
+      postConditionMode: PostConditionMode.Deny,
+      onFinish: (data) => {
+        console.log('Buy transaction:', data.txId);
+        resolve(data.txId);
+      },
+      onCancel: () => {
+        reject(new Error('User cancelled the transaction'));
+      },
+    });
   });
 };
 
@@ -112,17 +127,22 @@ export const makeOffer = async (
     uintCV(expiry)
   ];
 
-  await openContractCall({
-    network,
-    contractAddress: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[0],
-    contractName: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[1],
-    functionName: 'make-offer',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    onFinish: (data) => {
-      console.log('Offer transaction:', data.txId);
-      return data.txId;
-    },
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network,
+      contractAddress: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[0],
+      contractName: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[1],
+      functionName: 'make-offer',
+      functionArgs,
+      postConditionMode: PostConditionMode.Deny,
+      onFinish: (data) => {
+        console.log('Offer transaction:', data.txId);
+        resolve(data.txId);
+      },
+      onCancel: () => {
+        reject(new Error('User cancelled the transaction'));
+      },
+    });
   });
 };
 
@@ -136,17 +156,22 @@ export const acceptOffer = async (
     principalCV(nftContract)
   ];
 
-  await openContractCall({
-    network,
-    contractAddress: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[0],
-    contractName: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[1],
-    functionName: 'accept-offer',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    onFinish: (data) => {
-      console.log('Accept offer transaction:', data.txId);
-      return data.txId;
-    },
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network,
+      contractAddress: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[0],
+      contractName: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[1],
+      functionName: 'accept-offer',
+      functionArgs,
+      postConditionMode: PostConditionMode.Deny,
+      onFinish: (data) => {
+        console.log('Accept offer transaction:', data.txId);
+        resolve(data.txId);
+      },
+      onCancel: () => {
+        reject(new Error('User cancelled the transaction'));
+      },
+    });
   });
 };
 
@@ -154,16 +179,21 @@ export const acceptOffer = async (
 export const unlistNFT = async (listingId: number) => {
   const functionArgs = [uintCV(listingId)];
 
-  await openContractCall({
-    network,
-    contractAddress: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[0],
-    contractName: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[1],
-    functionName: 'unlist-nft',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    onFinish: (data) => {
-      console.log('Unlist transaction:', data.txId);
-      return data.txId;
-    },
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network,
+      contractAddress: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[0],
+      contractName: CONTRACT_ADDRESSES.MARKETPLACE.split('.')[1],
+      functionName: 'unlist-nft',
+      functionArgs,
+      postConditionMode: PostConditionMode.Deny,
+      onFinish: (data) => {
+        console.log('Unlist transaction:', data.txId);
+        resolve(data.txId);
+      },
+      onCancel: () => {
+        reject(new Error('User cancelled the transaction'));
+      },
+    });
   });
 };

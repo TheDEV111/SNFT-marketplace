@@ -71,7 +71,6 @@ export default function DemoPage() {
       const tokenUri = `ipfs://QmDemo${Date.now()}`;
       
       await mintNFT(address, tokenUri, mintRoyalty);
-      
       setMintStatus('success');
       setTimeout(() => {
         setMintName('');
@@ -79,9 +78,13 @@ export default function DemoPage() {
         setMintImage('');
         setMintStatus('idle');
       }, 3000);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.message && error.message.includes('cancelled')) {
+        setMintStatus('cancelled');
+      } else {
+        setMintStatus('error');
+      }
       console.error('Minting failed:', error);
-      setMintStatus('error');
     } finally {
       setMinting(false);
     }
@@ -101,16 +104,19 @@ export default function DemoPage() {
       const priceInMicroSTX = Number(listPrice) * 1000000;
       const expiryBlocks = 4320; // ~30 days
       await listNFT(CONTRACT_ADDRESSES.NFT_TOKEN, tokenId, priceInMicroSTX, expiryBlocks);
-      
       setListStatus('success');
       setTimeout(() => {
         setSelectedNFT('');
         setListPrice('');
         setListStatus('idle');
       }, 3000);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.message && error.message.includes('cancelled')) {
+        setListStatus('cancelled');
+      } else {
+        setListStatus('error');
+      }
       console.error('Listing failed:', error);
-      setListStatus('error');
     } finally {
       setListing(false);
     }
@@ -143,16 +149,19 @@ export default function DemoPage() {
       const tokenIdNumber = Number(buyTokenId);
       // Get listing price from contract
       await buyNFT(tokenIdNumber, CONTRACT_ADDRESSES.NFT_TOKEN);
-      
       setBuyStatus('success');
       setTimeout(() => {
         setBuyTokenId('');
         setBuyNFTData(null);
         setBuyStatus('idle');
       }, 3000);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.message && error.message.includes('cancelled')) {
+        setBuyStatus('cancelled');
+      } else {
+        setBuyStatus('error');
+      }
       console.error('Purchase failed:', error);
-      setBuyStatus('error');
     } finally {
       setBuying(false);
     }

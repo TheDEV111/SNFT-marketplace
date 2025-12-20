@@ -93,7 +93,7 @@ export default function CreatePage() {
       // In production, upload to IPFS first
       const tokenUri = 'ipfs://...'; // Replace with actual IPFS upload
       await mintNFT(address, tokenUri, formData.royalty);
-      
+
       // If price is set, list the NFT
       if (formData.price) {
         // Get the newly minted token ID from contract
@@ -114,8 +114,12 @@ export default function CreatePage() {
         properties: [{ trait: '', value: '' }],
       });
       setPreview(null);
-    } catch {
-      alert('Minting failed');
+    } catch (error: any) {
+      if (error.message && error.message.includes('cancelled')) {
+        alert('Minting cancelled by user');
+      } else {
+        alert('Minting failed');
+      }
     }
   };
 
